@@ -75,14 +75,17 @@ int main(){
     printf("\nEls nodes van des del 0 fins al %u:\n", num_vertex - 1);
     printf("Introdueix el vertex inicial:  ");
     scanf("%u",&inici);
-    while (inici < 0 || inici > num_vertex){
+    // No cal comprovar que el vertex inicial sigui positiu perque es un unsigned, pero si cal comprovar que no sigui major que el nombre de vertex del graf, perque si no, no estaria dins del graf.
+    while (inici >= num_vertex){
         printf("El vertex ha d'estar dins l'interval donat");
+        printf("Introdueix el vertex inicial:  ");
         scanf("%u",&inici);
     }
     printf("Introdueix el vertex final:  ");
     scanf("%u",&final);
-    while (final < 0 || final > num_vertex){
-        printf("El vertex ha d'estar dins l'interval donat");
+    while (final >= num_vertex || final == inici){
+        printf("El vertex ha d'estar dins l'interval donat i no pot ser el mateix que el vertex inicial");
+        printf("Introdueix el vertex final:  ");
         scanf("%u",&final);
     }
     // ------------- DFS -----------------------
@@ -90,10 +93,14 @@ int main(){
     // a la inversa i saber quan ha acabat.
     llista[inici]->pare = NULL;
     apilar(&pila, llista[inici]);
-    // Recorrem els nodes fins que els hem recorregut tots (la pila es queda buida) o
-    // fins que arribem al node de sortida, que en el nostre cas es l'ultim node (final)
-    while ((pila.inici != NULL) && (actual->id != final)){
+    // Recorrem els nodes fins que els hem recorregut tots (la pila es queda buida)
+    // No mirem el cas de trobar que el node actual es el final perque encara no l'hem tret de la pila, i si el mirem abans de treure'l, no podriem recorre el cami seguit a la inversa perque no tindriem realment el node final guardat.
+    while ((pila.inici != NULL)){
         actual = desapilar(&pila);
+        // Ara si podem mirar si el node actual es el final, perque ja l'hem tret de la pila i el tenim guardat a la variable actual, i si es el final, podem recorre el cami seguit 
+        if (actual->id == final){
+            break;
+        }
         estat_vertex[actual->id] = 1;
         for (j=0;j < (actual->num_fills); j++){
             // L'us de la variable fill es unicament per fer mes entendible el codi
@@ -106,7 +113,7 @@ int main(){
     }
     // Aqui o em trobat la sortida (seguint un cami que podem recorrer a la inversa)
     // o em recorregut tots els vertex.
-    if (pila.inici == NULL){
+    if (actual->id != final){
         printf("No s'ha trobat cap cami per sortir del laberint\n");
         return 0;
     }
@@ -122,8 +129,8 @@ int main(){
     }
     // Mostrem el camí seguit per pantalla
     printf("El cami trobat te %u pasos i es:\n", vertex_cami);
-    for (i=(vertex_cami-1);i>0;i--){
-        printf("%u -> ", cami_trobat[i]->id);
+    for (i=vertex_cami-1;i>0;i--){
+        printf("%u -> ", cami_trobat[i]->id);    
     }
     printf("%u", cami_trobat[0]->id);
     return 0;
@@ -143,6 +150,6 @@ vertex * desapilar(pila * p){
     ElementPila * e = p->inici;
     p->inici = e->siguiente;
     vertex * v = e->mateix;
-    e = NULL;
+    free(e);
     return v;
 }
