@@ -130,5 +130,6 @@ vertex * desapilar(pila * p){
     p->inici = e->siguiente;
     vertex * v = e->mateix;
     e = NULL;
+    free(e);
     return v;
 }
