@@ -78,8 +78,11 @@ int main(){
     apilar(&pila, llista[0]);
     // Recorrem els nodes fins que els hem recorregut tots (la pila es queda buida) o
     // fins que arribem al node de sortida, que en el nostre cas es l'ultim node (55)
-    while ((pila.inici != NULL) && (actual->id != 55)){
+    while ((pila.inici != NULL)){
         actual = desapilar(&pila);
+        if (actual->id == 55){
+            break;
+        }
         estat_vertex[actual->id] = 1;
         for (j=0;j < (actual->num_fills); j++){
             // L'us de la variable fill es unicament per fer mes entendible el codi
