@@ -77,14 +77,14 @@ int main(){
     scanf("%u",&inici);
     // No cal comprovar que el vertex inicial sigui positiu perque es un unsigned, pero si cal comprovar que no sigui major que el nombre de vertex del graf, perque si no, no estaria dins del graf.
     while (inici >= num_vertex){
-        printf("El vertex ha d'estar dins l'interval donat");
+        printf("El vertex ha d'estar dins l'interval donat\n");
         printf("Introdueix el vertex inicial:  ");
         scanf("%u",&inici);
     }
     printf("Introdueix el vertex final:  ");
     scanf("%u",&final);
     while (final >= num_vertex || final == inici){
-        printf("El vertex ha d'estar dins l'interval donat i no pot ser el mateix que el vertex inicial");
+        printf("El vertex ha d'estar dins l'interval donat i no pot ser el mateix que el vertex inicial\n");
         printf("Introdueix el vertex final:  ");
         scanf("%u",&final);
     }
@@ -97,11 +97,11 @@ int main(){
     // No mirem el cas de trobar que el node actual es el final perque encara no l'hem tret de la pila, i si el mirem abans de treure'l, no podriem recorre el cami seguit a la inversa perque no tindriem realment el node final guardat.
     while ((pila.inici != NULL)){
         actual = desapilar(&pila);
+        estat_vertex[actual->id] = 1;
         // Ara si podem mirar si el node actual es el final, perque ja l'hem tret de la pila i el tenim guardat a la variable actual, i si es el final, podem recorre el cami seguit 
         if (actual->id == final){
             break;
         }
-        estat_vertex[actual->id] = 1;
         for (j=0;j < (actual->num_fills); j++){
             // L'us de la variable fill es unicament per fer mes entendible el codi
             fill = llista[(actual->fills[j])];
@@ -117,6 +117,7 @@ int main(){
         printf("No s'ha trobat cap cami per sortir del laberint\n");
         return 0;
     }
+    // ------------------- Reescribim el cami trobat per imprimir -----------------------------
     // Guardem el cami seguit en una llista (d'apuntadors de vertexs)
     while (actual != NULL){
         if ((cami_trobat = (vertex **)realloc(cami_trobat, sizeof(vertex *)*(vertex_cami+1)))==NULL){
@@ -127,7 +128,7 @@ int main(){
         actual = actual->pare;
         vertex_cami++;
     }
-    // Mostrem el camí seguit per pantalla
+    // --------------- Mostrem el cami per pantalla --------------------------
     printf("El cami trobat te %u pasos i es:\n", vertex_cami);
     for (i=vertex_cami-1;i>0;i--){
         printf("%u -> ", cami_trobat[i]->id);    

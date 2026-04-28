@@ -25,7 +25,8 @@ vertex * desapilar(pila * p);
 int main(){
     FILE * fitxer;
     unsigned i, j, vertex_cami=0, num_vertex=0;
-    char * estat_vertex, caracter;
+    char * estat_vertex;
+    int caracter;
     vertex ** llista, * actual, * fill, **cami_trobat=NULL;
     pila pila = {NULL};
 
@@ -80,10 +81,10 @@ int main(){
     // fins que arribem al node de sortida, que en el nostre cas es l'ultim node (55)
     while ((pila.inici != NULL)){
         actual = desapilar(&pila);
+        estat_vertex[actual->id] = 1;
         if (actual->id == 55){
             break;
         }
-        estat_vertex[actual->id] = 1;
         for (j=0;j < (actual->num_fills); j++){
             // L'us de la variable fill es unicament per fer mes entendible el codi
             fill = llista[(actual->fills[j])];
@@ -95,10 +96,11 @@ int main(){
     }
     // Aqui o em trobat la sortida (seguint un cami que podem recorrer a la inversa)
     // o em recorregut tots els vertex.
-    if (pila.inici == NULL){
+    if (actual-> id != 55){
         printf("No s'ha trobat cap cami per sortir del laberint\n");
         return 0;
     }
+    // -------------- Reescribim el cami ------------------
     // Guardem el cami seguit en una llista (d'apuntadors de vertexs)
     while (actual != NULL){
         if ((cami_trobat = (vertex **)realloc(cami_trobat, sizeof(vertex *)*(vertex_cami+1)))==NULL){
@@ -109,7 +111,7 @@ int main(){
         actual = actual->pare;
         vertex_cami++;
     }
-    // Mostrem el camí seguit per pantalla
+    // ----------------- Mostrem el cami per pantalla -----------------------
     printf("El cami trobat es:\n");
     for (i=(vertex_cami-1);i>0;i--){
         printf("%u -> ", cami_trobat[i]->id);
@@ -132,7 +134,6 @@ vertex * desapilar(pila * p){
     ElementPila * e = p->inici;
     p->inici = e->siguiente;
     vertex * v = e->mateix;
-    e = NULL;
     free(e);
     return v;
 }
